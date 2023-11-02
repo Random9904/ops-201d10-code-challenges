@@ -9,7 +9,10 @@ $currentTime = Get-Date
 $startTime = $currentTime.AddHours(-24)
 
 # Retrieve events from the System event log within the specified time frame
-$events = Get-WinEvent -LogName System -FilterXPath "*[System[TimeCreated[@SystemTime>='$($startTime.ToUniversalTime())']]]"
+$events = Get-WinEvent -LogName System -FilterHashtable @{
+    LogName = 'System'
+    StartTime = $startTime
+}
 
 # Save the events to the output file
 $events | Format-Table -AutoSize | Out-File -FilePath $outputFilePath
@@ -24,16 +27,41 @@ $events = Get-WinEvent -LogName System -ErrorAction SilentlyContinue | Where-Obj
 # Save the error events to the output file
 $events | Format-Table -AutoSize | Out-File -FilePath $outputFilePath
 
+Write-Host
+Write-Host
+Write-Host
+Write-Host "---------------------EVENTS WITH ID OF 16---------------------"
+Write-Host
+Write-Host
+Write-Host
+
 # 3---------------------------
 # Get-WinEvent gets the events
 # Where-Object filters it to only 16
 Get-WinEvent -LogName System | Where-Object { $_.Id -eq 16 }
+
+Write-Host
+Write-Host
+Write-Host
+Write-Host "---------------------MOST RECENT 20---------------------"
+Write-Host
+Write-Host
+Write-Host
+
 
 # 4 -------------------------
 # Get-WinEvent gets the events
 # MaxEvents limits it to the recent 20
 # Format-table provide better legibility
 Get-WinEvent -LogName System -MaxEvents 20 | Format-Table -AutoSize
+
+Write-Host
+Write-Host
+Write-Host
+Write-Host "---------------------MOST RECENT 500---------------------"
+Write-Host
+Write-Host
+Write-Host
 
 # 5--------------------------
 # Same
